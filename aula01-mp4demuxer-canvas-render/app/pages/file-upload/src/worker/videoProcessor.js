@@ -10,12 +10,26 @@ export default class VideoProcessor {
     this.#mp4Demuxer = mp4Demuxer;
   }
   async mp4Decoder(encoderConfig, stream) {
-    this.#mp4Demuxer.run(stream, {
-      onConfig(config) {
+    const decoder = new VideoDecoder({
+      output(frame) {
         debugger;
       },
+      error(e) {
+        console.error("error at mp4Decoder", e);
+      },
+    });
+
+    this.#mp4Demuxer.run(stream, {
+      onConfig(config) {
+        decoder.configure(config);
+      },
+      /**
+       *
+       * @param {EncodedVideoChunk} chunk
+       */
       onChunk(chunk) {
-        debugger;
+        // debugger;
+        decoder.decode(chunk);
       },
     });
   }
