@@ -67,13 +67,13 @@ export default class MP4Demuxer {
    */
 
   #init(stream) {
+    let _offset = 0;
     const consumeFile = new WritableStream({
       /**
        *
        * @param {Uint8Array} chunk
        */
       write: (chunk) => {
-        let _offset = 0;
         const copy = chunk.buffer;
         copy.fileStart = _offset;
         this.#file.appendBuffer(copy);
