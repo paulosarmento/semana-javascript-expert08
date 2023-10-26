@@ -14,7 +14,7 @@ export default class VideoProcessor {
       onConfig(config) {
         debugger;
       },
-      onChunck(chunck) {
+      onChunk(chunk) {
         debugger;
       },
     });
@@ -24,6 +24,5 @@ export default class VideoProcessor {
     const stream = file.stream();
     const fileName = file.name.split("/").pop().replace(".mp4", "");
     await this.mp4Decoder(encoderConfig, stream);
-    debugger;
   }
 }
