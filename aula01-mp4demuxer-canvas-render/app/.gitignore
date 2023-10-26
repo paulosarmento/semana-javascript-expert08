@@ -1,6 +1,5 @@
-.history
-
 # Logs
+*.mp4
 logs
 *.log
 npm-debug.log*
