@@ -1,4 +1,5 @@
 import VideoProcessor from "./videoProcessor.js";
+import MP4Demuxer from "./mp4Demuxer.js";
 
 const qvgaConstraints = {
   width: 320,
@@ -24,13 +25,16 @@ const encoderConfig = {
   //   hardwareAcceleration: "prefer-software",
   //   avc: { format: "annexb" },
 };
-
-const videoProcessor = new VideoProcessor();
+const mp4Demuxer = new MP4Demuxer();
+const videoProcessor = new VideoProcessor({ mp4Demuxer });
 
 onmessage = async ({ data }) => {
   await videoProcessor.start({
     file: data.file,
     encoderConfig,
+    sendMessage(message) {
+      self.postMessage(message);
+    },
   });
   self.postMessage({ status: "done" });
 };
