@@ -56,4 +56,4 @@ async function fakeFetch() {
   Reflect.defineProperty(event, "target", { value: { files: [file] } });
   document.getElementById("fileUpload").dispatchEvent(event);
 }
-fakeFetch();
+// fakeFetch();
