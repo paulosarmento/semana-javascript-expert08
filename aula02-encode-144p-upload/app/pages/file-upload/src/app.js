@@ -15,6 +15,8 @@ worker.onmessage = ({ data }) => {
   if (data.status !== "done") return;
   clock.stop();
   view.updateElapsedTime(`Process took ${took.replace("ago", "")}`);
+  // debugger;
+  view.downloadBlobAsFile(data.buffers, data.filename);
   //   console.log("recebi no processo da view", data);
 };
 

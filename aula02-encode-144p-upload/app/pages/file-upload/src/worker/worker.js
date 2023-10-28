@@ -1,6 +1,7 @@
 import VideoProcessor from "./videoProcessor.js";
 import MP4Demuxer from "./mp4Demuxer.js";
 import CanvasRenderer from "./canvasRenderer.js";
+import WebMWriter from "./../deps/webm-writer2.js";
 const qvgaConstraints = {
   width: 320,
   height: 240,
@@ -25,8 +26,19 @@ const encoderConfig = {
   //   hardwareAcceleration: "prefer-software",
   //   avc: { format: "annexb" },
 };
+const webmWriterConfig = {
+  codec: "VP9",
+  height: encoderConfig.height,
+  width: encoderConfig.width,
+  bitrate: encoderConfig.bitrate,
+};
+
 const mp4Demuxer = new MP4Demuxer();
-const videoProcessor = new VideoProcessor({ mp4Demuxer });
+const webMWriter = new WebMWriter(webmWriterConfig);
+const videoProcessor = new VideoProcessor({
+  mp4Demuxer,
+  webMWriter,
+});
 // Funcoes que rodam em segundo plano no navegador
 onmessage = async ({ data }) => {
   const renderFrame = CanvasRenderer.getRenderer(data.canvas);
@@ -38,5 +50,5 @@ onmessage = async ({ data }) => {
       self.postMessage(message);
     },
   });
-  self.postMessage({ status: "done" });
+  // self.postMessage({ status: "done" });
 };
