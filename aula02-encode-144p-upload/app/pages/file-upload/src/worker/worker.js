@@ -21,10 +21,10 @@ const encoderConfig = {
   pt: 4,
   hardwareAcceleration: "prefer-software",
   // MP4
-  //   codec: "avc1.42002A",
-  //   pt: 1,
-  //   hardwareAcceleration: "prefer-software",
-  //   avc: { format: "annexb" },
+  // codec: "avc1.42002A",
+  // pt: 1,
+  // hardwareAcceleration: "prefer-hardware",
+  // avc: { format: "annexb" },
 };
 const webmWriterConfig = {
   codec: "VP9",

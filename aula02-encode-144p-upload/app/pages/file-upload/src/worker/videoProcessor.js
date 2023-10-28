@@ -164,6 +164,41 @@ export default class VideoProcessor {
     };
   }
 
+  upload(filename, resolution, type) {
+    const chunks = [];
+    let byteCount = 0;
+    const triggerUpload = async (chunks) => {
+      debugger;
+      const blob = new Blob(chunks, { type: "video/webm" });
+
+      // fazer upload
+
+      // vai remover todos os elementos
+      chunks.length = 0;
+      byteCount = 0;
+    };
+    return new WritableStream({
+      /**
+       *
+       * @param {object} options
+       * @param {Uint8Array} options.data
+       */
+      async write({ data }) {
+        chunks.push(data);
+        byteCount += data.byteLength;
+        // se for menos que 10mb nao faz upload!
+        if (byteCount <= 10e6) return;
+        await triggerUpload(chunks);
+        // debugger;
+        // renderFrame(frame);
+      },
+      async close() {
+        if (!chunks.length) return;
+        await triggerUpload(chunks);
+      },
+    });
+  }
+
   async start({ file, encoderConfig, renderFrame, sendMessage }) {
     const stream = file.stream();
     const fileName = file.name.split("/").pop().replace(".mp4", "");
@@ -171,30 +206,34 @@ export default class VideoProcessor {
       .pipeThrough(this.encode144p(encoderConfig))
       .pipeThrough(this.renderDecodedFramesAndGetEncodedChunks(renderFrame))
       .pipeThrough(this.transformIntoWebM())
-      .pipeThrough(
-        new TransformStream({
-          transform: ({ data, position }, controller) => {
-            this.#buffers.push(data);
-            controller.enqueue(data);
-          },
-          flush: () => {
-            // debugger;
-            sendMessage({
-              status: "done",
-              buffers: this.#buffers,
-              filename: fileName.concat("-144p.webm"),
-            });
-          },
-        })
-      )
-      .pipeTo(
-        new WritableStream({
-          write(frame) {
-            // Cuidado com o debugger ele pausa o processo
-            // debugger;
-            // renderFrame(frame);
-          },
-        })
-      );
+      // .pipeThrough(
+      //   new TransformStream({
+      //     transform: ({ data, position }, controller) => {
+      //       this.#buffers.push(data);
+      //       controller.enqueue(data);
+      //     },
+      //     flush: () => {
+      //       // debugger;
+      //       // sendMessage({
+      //       //   status: "done",
+      //       //   buffers: this.#buffers,
+      //       //   filename: fileName.concat("-144p.webm"),
+      //       // });
+      //       sendMessage({
+      //         status: "done",
+      //       });
+      //     },
+      //   })
+      // )
+      .pipeTo(this.upload(fileName, "144p", "webm"));
+    // .pipeTo(
+    //   new WritableStream({
+    //     write(frame) {
+    //       // Cuidado com o debugger ele pausa o processo
+    //       // debugger;
+    //       // renderFrame(frame);
+    //     },
+    //   })
+    // );
   }
 }
